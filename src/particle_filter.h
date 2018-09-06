@@ -10,6 +10,8 @@
 #define PARTICLE_FILTER_H_
 
 #include "helper_functions.h"
+#include <random>
+using namespace std;
 
 struct Particle {
 
@@ -28,7 +30,7 @@ struct Particle {
 class ParticleFilter {
 	
 	// Number of particles to draw
-	int num_particles; 
+	unsigned int num_particles;
 	
 	
 	
@@ -37,6 +39,8 @@ class ParticleFilter {
 	
 	// Vector of weights of all particles
 	std::vector<double> weights;
+
+	default_random_engine gen;
 	
 public:
 	
@@ -79,10 +83,22 @@ public:
 	 * @param observations Vector of landmark observations
 	 */
 	void dataAssociation(std::vector<LandmarkObs> predicted, std::vector<LandmarkObs>& observations);
-	
+
+	/** findClosestLandmark
+	 * Returns the landmark closest to observation in map coordinates
+	 *   (a nearest-neighbors data association).
+	 * also checks if the landmark in sensor range
+	 *
+	 * @param obs_x  X-position of observation
+	 * @param obs_y  Y-position of observation
+	 * @param p_x  X-position of particle
+	 * @param map_landmarks Vector of landmarks
+	 */
+	int findClosestLandmark(double obs_x, double obs_y, double p_x, double p_y, double sensor_range, const Map& map_landmarks);
+
 	/**
-	 * updateWeights Updates the weights for each particle based on the likelihood of the 
-	 *   observed measurements. 
+	 * updateWeights Updates the weights for each particle based on the likelihood of the
+	 *   observed measurements.
 	 * @param sensor_range Range [m] of sensor
 	 * @param std_landmark[] Array of dimension 2 [Landmark measurement uncertainty [x [m], y [m]]]
 	 * @param observations Vector of landmark observations
